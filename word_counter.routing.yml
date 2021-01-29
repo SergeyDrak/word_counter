@@ -1,0 +1,9 @@
+word_counter.default_form:
+  path: '/admin/config/content/word_count/settings'
+  defaults:
+    _form: '\Drupal\word_counter\Form\DefaultForm'
+    _title: 'Settings for Word counter'
+  requirements:
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE

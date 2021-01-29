@@ -1,0 +1,11 @@
+{
+    "name": "word_counter",
+    "type": "drupal-module",
+    "description": "",
+    "homepage": "https://www.drupal.org/project/word_counter",
+    "minimum-stability": "5",
+    "authors": [
+        {
+            "name" : "S.Drak",
+        }    ],
+}

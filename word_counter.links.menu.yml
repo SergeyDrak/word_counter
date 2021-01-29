@@ -1,0 +1,6 @@
+word_counter.default_form:
+  title: 'Settings for Word counter'
+  route_name: word_counter.default_form
+  description: 'A description for the menu entry'
+  parent: system.admin_config_content
+  weight: 99

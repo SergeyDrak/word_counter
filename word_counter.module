@@ -1,0 +1,84 @@
+<?php
+
+/**
+ * @file
+ * Contains word_counter.module
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\node\Entity\NodeType;
+
+/**
+ * Implements hook_help().
+ * @param $route_name
+ * @param RouteMatchInterface $route_match
+ * @return string
+ */
+function word_counter_help($route_name, RouteMatchInterface $route_match)
+{
+  switch ($route_name) {
+    // Main module help for the word_counter module.
+    case 'help.page.word_counter':
+      $output = '';
+      $output .= '<h3>' . t('About:') . '</h3>';
+      $output .= '<p>' . t('Test module for counting words in the &quot;body&quot; field and further displaying it to the user.') . '</p>';
+      $output .= '<h3>' . t('Using:') . '</h3>';
+      $output .= '<p>' . t('By default, the functionality of the module is disabled.') . '</p>';
+      $output .= '<p>' . t('To enable word counting, go to the <a href = "/admin/config/content/word_count/settings">administration page</a> and enable the functionality.') . '</p>';
+      $output .= '<p>' . t('To enable word counting, go to the administration page and enable the functionality.') . '</p>';
+      $output .= '<p>' . t('After that, go to any page where there is a body field and we can see the counter.') . '</p>';
+      $output .= '<h3>' . t('To execute the tests:') . '</h3>';
+      $output .= '<p>' . t('1. enable modules CORE.Testing and word_counter.') . '</p>';
+      $output .= '<p>' . t('2. go to admin/config/development/testing.') . '</p>';
+      $output .= '<p>' . t('3. select test word_counter.') . '</p>';
+      $output .= '<p>' . t('4. press  Run tests.') . '</p>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_entity_extra_field_info().
+ */
+function word_counter_entity_extra_field_info()
+{
+  $extra = [];
+
+  foreach (NodeType::loadMultiple() as $bundle) {
+    $extra['node'][$bundle->id()]['display']['count_node_words'] = [
+      'label' => t('Words in the body field'),
+      'description' => t('Calculate words in body'),
+      'weight' => 1000,
+      'visible' => TRUE,
+    ];
+  }
+
+  return $extra;
+}
+
+/**
+ * Implements hook_entity_view().
+ * @param array $build
+ * @param EntityInterface $entity
+ * @param EntityViewDisplayInterface $display
+ * @param $view_mode
+ */
+function word_counter_node_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode)
+{
+  $config = \Drupal::config('word_counter.default')->get('word_counter.enable_counting');
+
+  if ($display->getComponent('count_node_words') && $entity->hasField('body')) {
+    if ($entity->body->isEmpty() || $config == 'turn') {
+      $value = t("Can't be calculated because body field is empty or disable by admin");
+    } else {
+      $word_count = str_word_count(strip_tags($entity->body->value));
+      $value = $word_count;
+    }
+
+    $build['word_counter_field'] = [
+      '#type' => 'markup',
+      '#markup' => "<p><strong>Words in body field:</strong> {$value} words.</p>",
+    ];
+  }
+}

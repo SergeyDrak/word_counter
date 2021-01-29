@@ -1,0 +1,9 @@
+name: Word counter
+type: module
+description: 'Test module for counting words in the "body" field.'
+core_version_requirement: ^8 || ^9
+package: Custom
+configure: word_counter.default_form
+php: 7.0
+dependencies:
+  - node
